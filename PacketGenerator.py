@@ -119,14 +119,10 @@ def send_dhcp_discover(_mac, _host_name, t_f):
 
     sendp(test_packet, iface=nic)
 
+
 def send_ipv4_icmp_request(src_ip, dst_ip):
 
-    print(dst_ip)
-
-    # Gen every random value we need
-    # ip_id = random.randint(0, 65535)
-
-    test_packet = (scapy.all.IP(src=PC_IP, dst=dst_ip, tos=55) /
+    test_packet = (scapy.all.IP(src=src_ip, dst=dst_ip, tos=55) /
                    scapy.all.ICMP(id=1))
 
     ans, unans = sr(test_packet, iface=nic, timeout=5)
@@ -137,6 +133,35 @@ def send_ipv4_icmp_request(src_ip, dst_ip):
         if ans[0][0]:
             print(ans[0][0].show())
     print(unans)
+
+
+def send_ipv4_tcp(src_ip, dst_ip, src_port, dst_port):
+
+    # TCP flag default is SYN
+    test_packet = (scapy.all.IP(src=src_ip, dst=dst_ip) /
+                   scapy.all.TCP(sport=60888, dport=23))
+                   
+    ans, unans = sr(test_packet, iface=nic, timeout=5)
+
+    print(len(unans))
+
+    for pkt in ans:
+        if ans[0][0]:
+            ans[0][0].show()
+    print(unans)
+
+
+def send_ipv6_icmp_request(src_ip, dst_ip):
+    test_packet = (scapy.all.IPv6(src=src_ip, dst=dst_ip, tc=220) /
+                   scapy.all.ICMPv6EchoRequest(id=1))
+    
+    print(len(unans))
+
+    for pkt in ans:
+        if ans[0][0]:
+            ans[0][0].show()
+    print(unans)
+
 
 if __name__ == "__main__":
     # DUT_MAC = '00:02:6F:00:00:00'
